@@ -1,0 +1,29 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div width="50%">
+    <ul class="list-group" style="width: 30%;">
+    {% for auction_listing in auction_listings %}
+            
+            <li class="list-group-item" >
+                <h4><a href={% url "listing_page" auction_listing.id %}> {{ auction_listing }} </a></h4>
+        
+                <div>
+                    <a href={% url "listing_page" auction_listing.id %}>
+                        {% if auction_listing.Image_URL %}
+                        <img src="{{auction_listing.Image_URL}}" alt="Image of {{ auction_listing.Title }}" width="300">
+                        {% endif %}
+                    </a>
+                </div>
+                <div>{{auction_listing.Description}}</div>
+                    {% if auction_listing.Current_bid %}
+                <div>Current bid: ${{auction_listing.Current_bid}}</div>
+            {% else %}
+                <div>Starting bid: ${{auction_listing.Starting_bid}}</div>
+            {% endif %}
+                <div>Category: {{auction_listing.get_Category_display }}</div>
+            </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

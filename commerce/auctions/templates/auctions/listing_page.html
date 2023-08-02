@@ -1,0 +1,88 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 >Listing: {{ auction_listing.Title }}</h2>  
+    {% if is_bid_error == "insufficient_bid" %}
+        <div class="alert alert-warning" role="alert" id="alert-funds">Insufficient bid amount.</div>
+    {% elif is_bid_error == "success" %}
+        <div class="alert alert-success" role="alert" id="alert-bet">Bid placed!</div>
+    {% endif %}
+
+    {% if is_active == False %}
+        <div class="alert alert-warning" role="alert" id="alert-insactive">This listing is now inactive.</div>
+    {% endif %}
+
+    {% if is_logged_in %} 
+        {% if is_user_winner  %}
+            <div class="alert alert-success" role="alert" id="alert-winner">You won the auction for this item!</div>
+        {% endif %}
+
+        {% if not is_in_watchlist %}
+            <form action="{% url 'add_to_watchlist' auction_listing.pk %}" method = "POST">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary" value="Add to Watchlist">
+            </form>
+        {% else %}
+            <form action="{% url 'remove_from_watchlist' auction_listing.pk %}" method = "POST">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary" value="Remove from Watchlist">
+            </form>
+        {% endif %}
+
+        {% if is_user_creator and is_active %}
+            <form action="{% url 'close_auction' auction_listing.pk %}" method = "POST">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary" value="Close Auction">
+            </form>
+        {% endif %}
+
+        {% if is_active %}
+            <form action="{% url 'place_bid' auction_listing.pk %}" method = "POST">
+                {% csrf_token %}
+                {{ bid }}
+                <input type="submit" class="btn btn-primary" value="Place Bid">
+            </form>
+        {% endif %}
+    
+    {% endif %}
+
+    {% if is_active and auction_listing.Current_bid %}
+        <div>Current bid: ${{ auction_listing.Current_bid }}</div>
+    {% elif is_active %}
+    <div>Starting bid: ${{ auction_listing.Starting_bid }}</div>
+    {% elif auction_listing.Current_bid %}
+        <div>Winning bid: ${{ auction_listing.Current_bid }}</div>
+    {% else %}
+        <div>No bids were placed while the listing was active.</div>
+
+    {% endif %}
+
+    {% if auction_listing.Image_URL %}
+        <img src="{{auction_listing.Image_URL}}" alt="Image of {{ auction_listing.Title }}" width="500">
+    {% endif %}
+    
+    <div>{{ auction_listing.Description }}</div>
+    <h6> Details </h6>
+    <ul>
+        <li> Category: {{ auction_listing.get_Category_display }} </li>
+        <li> Posted by: {{ auction_listing.Creator }} </li>
+    </ul>
+    {% if is_logged_in %}
+        <form action="{% url 'add_comment' auction_listing.pk %}" method = "POST">
+            {% csrf_token %}
+            {{ comment.as_p }}
+            <input type="submit" class="btn btn-primary" value="Add Comment">
+        </form>
+    {% endif %}
+    <div id="comments">
+        <h3>Comments</h3>
+    <ul class="list-group">
+    {% for comment in comments %}
+    <li class="list-group-item" >{{comment.Comment}}
+    <div>Posted by: {{comment.commenter}}</div>
+    </li>
+    {% endfor %}
+    </ul>
+    </div>
+
+{% endblock %}

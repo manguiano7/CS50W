@@ -1,0 +1,20 @@
+#!/bin/bash
+#resets database and removes migration files
+
+cd /home/mike/me50/commerce/auctions/__pycache__
+rm *.pyc
+
+cd /home/mike/me50/commerce/auctions/migrations
+rm 0*
+
+cd /home/mike/me50/commerce/auctions/migrations/__pycache__
+rm *
+
+cd /home/mike/me50/commerce/commerce/__pycache__
+rm *
+
+cd /home/mike/me50/commerce/
+rm db*
+
+python3 manage.py makemigrations
+python3 manage.py migrate

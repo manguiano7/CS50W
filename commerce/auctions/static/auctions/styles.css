@@ -1,0 +1,19 @@
+body {
+    padding: 10px;
+   
+}
+
+div{
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+input {
+    margin-top:2px;
+    margin-bottom:2px;
+}
+
+#comments {
+    width:25%;
+    margin:1%;
+}
